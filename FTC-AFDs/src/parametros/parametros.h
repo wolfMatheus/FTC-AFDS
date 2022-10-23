@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define PARAMETROS_H
+#define PARAMS_H
 #define DOT "--dot"
 #define OUTPUT "--output"
 #define COMPLEMENTO "--complemento"

@@ -13,14 +13,14 @@ typedef struct cli_item
 
 /**
  * Conjunto de parametros registrados para o funcionamento da CLI. Possui um conjunto de itens, que sao registrados
- * pelo usuario da biblioteca, um tamanho (items_size), e o tamanho real do array, para fins de controle interno (size).
+ * pelo usuario da biblioteca, um tamanho (items_size), e o tamanho real do array, para fins de controle interno (tamanho).
 */
 typedef struct cli_structure
 {
   CLI_Item **items;
-  int size;
+  int tamanho;
   int items_size;
-} CLI_Parametros;
+} CLI_Params;
 
 /**
  * Lista ligada que representa os valores encontrados pela CLI para algum CLI_Item. Ela possui um valor e um ponteiro para
@@ -38,15 +38,14 @@ typedef struct cli_value
 */
 typedef struct cli_result
 {
-  CLI_Parametros
- *parametros;
+  CLI_Params *params;
   CLI_Value **values;
-  int size;
+  int tamanho;
 } CLI_Result;
 
 /**
  * Factory method que gera um CLI_Value a partir de uma string value.
- * @parametros value: string desejada.
+ * @param value: string desejada.
  * @return o CLI_Value correspondente.
 */
 CLI_Value *createCLIValue(char *value);
@@ -54,70 +53,69 @@ CLI_Value *createCLIValue(char *value);
 /**
  * Factory method que gera um CLI_Item a partir de uma string nome, sua posicao e seu numero de valores. Esta funcao
  * eh usada internamente, portanto nao se preocupe com a necessidade de informar a posicao do item.
- * @parametros name: nome do valor.
- * @parametros position: posicao do valor.
- * @parametros number_values: numero de valores aceitos.
+ * @param name: nome do valor.
+ * @param position: posicao do valor.
+ * @param number_values: numero de valores aceitos.
 */
 CLI_Item *getItem(char *name, int position, int number_values);
 
 /**
- * Retorna uma instancia de CLI_Parametros
- * com o vetor de itens alocado com o tamanho inicial informado.
- * @parametros initial_size: tamanho inicial do vetor de itens.
- * @return a instancia de parametros desejada.**/
-CLI_Parametros *getParams(int initial_size);
+ * Retorna uma instancia de CLI_Params com o vetor de itens alocado com o tamanho inicial informado.
+ * @param initial_size: tamanho inicial do vetor de itens.
+ * @return a instancia de parametros desejada.
+*/
+CLI_Params *getParams(int initial_size);
 
 /**
- * Faz a leitura completa dos parametros informados pelo usuario e converte tudo para uma instancia de CLI_Parametros
- *.
+ * Faz a leitura completa dos parametros informados pelo usuario e converte tudo para uma instancia de CLI_Params.
  * Eh interessante notar que nao eh feita nenhuma validacao aqui nesse metodo, devido ao fato de que ele nao foi construido
  * com esse intuito. Esse modulo eh de baixo nivel somente para retornar os valores encontrados, e a validacao eh feita por 
- * um modulo de mais alto nivel (modulo de Validacao).
- * @parametros parametros: parametros registrados na CLI.
- * @parametros argc: tamanho do argv.
- * @parametros argv: array de parametros passado pelo usuario. 
+ * um modulo de mais alto nivel (modulo de contexto).
+ * @param params: parametros registrados na CLI.
+ * @param argc: tamanho do argv.
+ * @param argv: array de parametros passado pelo usuario. 
  * @return o resultado processado.
 */
-CLI_Result *readCLI(CLI_Parametros *parametros, int argc, char *argv[]);
+CLI_Result *readCLI(CLI_Params *params, int argc, char *argv[]);
 
 /**
  * Procura o item com o dado nome nos parametros informados.
- * @parametros parametros: parametros que podem conter o item.
- * @parametros value: nome do item a ser procurado
+ * @param params: parametros que podem conter o item.
+ * @param value: nome do item a ser procurado
  * @return item procurado caso seja encontrado, NULL caso contrario.
 */
-CLI_Item *searchItem(CLI_Parametros parametros, char *value);
+CLI_Item *searchItem(CLI_Params params, char *value);
 
 /**
  * Retorna o valor correspondente ao parametro informado, dentro dos resultados de CLI.
- * @parametros result: resultado alvo
- * @parametros parametros: nome do item a ser procurado
+ * @param result: resultado alvo
+ * @param param: nome do item a ser procurado
  * @return lista ligada com os valores encontrados para o parametro.
 */
-CLI_Value *getCLIValue(CLI_Result result, char *parametros);
+CLI_Value *getCLIValue(CLI_Result result, char *param);
 
 /**
  * Libera a memoria alocada para uma lista ligada.
- * @parametros head: cabeca da lista ligada.
+ * @param head: cabeca da lista ligada.
 */
 void freeLinkedList(CLI_Value *head);
 
 /**
  * Registra um novo parametro na instancia de parametros informada.
- * @parametros parametros: instancia de parametros de CLI alvo.
- * @parametros name: nome do parametro a ser adicionado.
- * @parametros number_values: numero de valores esperados para o parametro.
+ * @param params: instancia de parametros de CLI alvo.
+ * @param name: nome do parametro a ser adicionado.
+ * @param number_values: numero de valores esperados para o parametro.
 */
-void registerParam(CLI_Parametros *parametros, char *name, int number_values);
+void registerParam(CLI_Params *params, char *name, int number_values);
 
 /**
  * Libera a memoria alocada para um resultado de CLI.
- * @parametros result: resultado que tera a memoria liberada.
+ * @param result: resultado que tera a memoria liberada.
 */
 void freeCLI(CLI_Result *result);
 
 /**
  * Libera a memoria alocada para parametros de CLI.
- * @parametros parametros: parametros que terao sua memoria liberada.
+ * @param params: parametros que terao sua memoria liberada.
 */
-void freeCLIParams(CLI_Parametros *parametros);
+void freeCLIParams(CLI_Params *params);

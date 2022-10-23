@@ -1,51 +1,51 @@
 #include <stdio.h>
 #include <string.h>
-#include "./operacao/operacao.h"
+#include "./operacao/operacoes.h"
 
 /**
  * Registra os parametros necessarios para o funcionamento da CLI da aplicacao.
  */
-CLI_Parametros *createCLIParametros()
+CLI_Params *createCLIParams()
 {
-  CLI_Parametros *parametros = getParams(10);
+  CLI_Params *params = getParams(10); 
 
-  registerParam(parametros, DOT, 1);
-  registerParam(parametros, OUTPUT, 1);
-  registerParam(parametros, COMPLEMENTO, 1);
-  registerParam(parametros, INTERSECAO, 2);
-  registerParam(parametros, UNIAO, 2);
-  registerParam(parametros, MINIMIZACAO, 1);
-  registerParam(parametros, RECONHECER, 2);
+  registerParam(params, DOT, 1);
+  registerParam(params, OUTPUT, 1);
+  registerParam(params, COMPLEMENTO, 1);
+  registerParam(params, INTERSECAO, 2);
+  registerParam(params, UNIAO, 2);
+  registerParam(params, MINIMIZACAO, 1);
+  registerParam(params, RECONHECER, 2);
 
-  return parametros;
+  return params;
 }
 
 /**
- * Programa principal, executa o modulo de CLI, depois aplica o modulo de Validacao,
+ * Programa principal, executa o modulo de CLI, depois aplica o modulo de contexto,
  * e ao final aplica o modulo de operacoes, para retornar o resultado esperado.
  */
 int main(int argc, char *argv[])
 {
-  CLI_Parametros *parametros = createCLIParametros();
-  CLI_Result *result = readCLI(parametros, argc, argv);
+  CLI_Params *params = createCLIParams();
+  CLI_Result *resultado = readCLI(params, argc, argv);
 
-  ApplicationValidacao *appValidacao = getAppValidacao(*result);
-  if (appValidacao->err)
+  ApplicationContext *appContext = getAppContext(*resultado);
+  if (appContext->err)
   {
-    printf("Invalid input provided. Error log: %s\n", appValidacao->message);
+    printf("Invalid input provided. Error log: %s\n", appContext->message);
     return 1;
   }
 
-  validateAppValidacao(appValidacao);
-  if (appValidacao->err)
+  validateAppContext(appContext);
+  if (appContext->err)
   {
-    printf("Invalid input provided. Error log: %s\n", appValidacao->message);
+    printf("Invalid input provided. Error log: %s\n", appContext->message);
     return 1;
   }
 
-  executeOperation(*appValidacao);
+  executeOperation(*appContext);
 
-  freeAppValidacao(appValidacao);
-  freeCLI(result);
+  freeAppContext(appContext);
+  freeCLI(resultado);
   return 0;
 }

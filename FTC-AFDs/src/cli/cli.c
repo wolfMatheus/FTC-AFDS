@@ -19,35 +19,35 @@ CLI_Value *createCLIValue(char *value)
   cli_value->next = NULL;
 }
 
-CLI_Item *searchItem(CLI_Parametros parametros, char *value)
+CLI_Item *searchItem(CLI_Params params, char *value)
 {
-  for (int i = 0; i < parametros.items_size; i++)
+  for (int i = 0; i < params.items_size; i++)
   {
-    if (!strcmp(parametros.items[i]->name, value))
+    if (!strcmp(params.items[i]->name, value))
     {
-      return parametros.items[i];
+      return params.items[i];
     }
   }
   return NULL;
 }
 
-void registerParam(CLI_Parametros *parametros, char *name, int number_values)
+void registerParam(CLI_Params *params, char *name, int number_values)
 {
-  if (parametros->items_size == parametros->size)
+  if (params->items_size == params->tamanho)
   {
-    parametros->size += 1;
-    parametros->items = realloc(parametros->items, sizeof(CLI_Item *) * parametros->size);
+    params->tamanho += 1;
+    params->items = realloc(params->items, sizeof(CLI_Item *) * params->tamanho);
   }
-  parametros->items[parametros->items_size] = getItem(name, parametros->items_size, number_values);
-  parametros->items_size++;
+  params->items[params->items_size] = getItem(name, params->items_size, number_values);
+  params->items_size++;
 }
 
-CLI_Parametros *getParams(int initial_size)
+CLI_Params *getParams(int initial_size)
 {
-  CLI_Parametros *parametros = malloc(sizeof(CLI_Parametros));
-  parametros->size = initial_size;
-  parametros->items_size = 0;
-  parametros->items = malloc(sizeof(CLI_Item *) * initial_size);
+  CLI_Params *params = malloc(sizeof(CLI_Params));
+  params->tamanho = initial_size;
+  params->items_size = 0;
+  params->items = malloc(sizeof(CLI_Item *) * initial_size);
 }
 
 CLI_Value *getValuesLinkedList(CLI_Item *item, char *argv[], int *current_index)
@@ -72,12 +72,12 @@ CLI_Value *getValuesLinkedList(CLI_Item *item, char *argv[], int *current_index)
   return head;
 }
 
-void populateValuesArray(CLI_Parametros *cli_parametros, CLI_Value **values, int size, int argc, char *argv[])
+void populateValuesArray(CLI_Params *cli_params, CLI_Value **values, int tamanho, int argc, char *argv[])
 {
   int i = 0;
   while (i < argc - 1)
   {
-    CLI_Item *item = searchItem(*cli_parametros, argv[i]);
+    CLI_Item *item = searchItem(*cli_params, argv[i]);
     // If parameter is registered, store it on the array.
     if (item)
     {
@@ -88,37 +88,37 @@ void populateValuesArray(CLI_Parametros *cli_parametros, CLI_Value **values, int
   }
 }
 
-CLI_Result *readCLI(CLI_Parametros *cli_parametros, int argc, char *argv[])
+CLI_Result *readCLI(CLI_Params *cli_params, int argc, char *argv[])
 {
   CLI_Result *result = malloc(sizeof(CLI_Result));
 
-  result->parametros = cli_parametros;
-  result->size = cli_parametros->items_size;
+  result->params = cli_params;
+  result->tamanho = cli_params->items_size;
 
-  CLI_Value **values = malloc(sizeof(CLI_Value *) * result->size);
-  for (int i = 0; i < result->size; i++)
+  CLI_Value **values = malloc(sizeof(CLI_Value *) * result->tamanho);
+  for (int i = 0; i < result->tamanho; i++)
   {
     values[i] = NULL;
   }
 
-  populateValuesArray(cli_parametros, values, result->size, argc, argv);
+  populateValuesArray(cli_params, values, result->tamanho, argc, argv);
   result->values = values;
   return result;
 }
 
-CLI_Value *getCLIValue(CLI_Result result, char *parametros)
+CLI_Value *getCLIValue(CLI_Result result, char *param)
 {
-  CLI_Item *item = searchItem(*result.parametros, parametros);
+  CLI_Item *item = searchItem(*result.params, param);
   return result.values[item->position];
 }
 
 void freeCLI(CLI_Result *result)
 {
-  for (int i = 0; i < result->size; i++)
+  for (int i = 0; i < result->tamanho; i++)
   {
     freeLinkedList(result->values[i]);
   }
-  freeCLIParametros(result->parametros);
+  freeCLIParams(result->params);
   free(result->values);
   free(result);
 }
@@ -136,12 +136,12 @@ void freeLinkedList(CLI_Value *head)
   }
 }
 
-void freeCLIParametros(CLI_Parametros *parametros)
+void freeCLIParams(CLI_Params *params)
 {
-  for (int i = 0; i < parametros->items_size; i++)
+  for (int i = 0; i < params->items_size; i++)
   {
-    free(parametros->items[i]);
+    free(params->items[i]);
   }
-  free(parametros->items);
-  free(parametros);
+  free(params->items);
+  free(params);
 }

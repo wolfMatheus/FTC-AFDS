@@ -1,23 +1,23 @@
 #include <stdlib.h>
 #include <string.h>
-#include "../operacao.h"
+#include "../operacoes.h"
 #include "../../strings/stringutil.h"
 
 char **getDoubleCircles(AFD *afd)
 {
-  char **double_circles = malloc(sizeof(char *) * (*afd->number_final_states));
-  for (int i = 0; i < *afd->number_final_states; i++)
+  char **double_circles = malloc(sizeof(char *) * (*afd->numero_estado_final));
+  for (int i = 0; i < *afd->numero_estado_final; i++)
   {
-    double_circles[i] = copyString(afd->states[afd->final_states[i]]);
+    double_circles[i] = copyString(afd->estados[afd->estado_final[i]]);
   }
   return double_circles;
 }
 
-DOTTransition *getSingleTransition(AFD *afd, Transition *transition)
+DOTTransition *getSingleTransition(AFD *afd, Transition *transicao)
 {
-  char *from = afd->states[*transition->from];
-  char *to = afd->states[*transition->to];
-  char *read = afd->alphabet[*transition->read];
+  char *from = afd->estados[*transicao->from];
+  char *to = afd->estados[*transicao->to];
+  char *read = afd->alphabet[*transicao->read];
 
   DOTTransition *dotTransition = getDOTTransition(from, to, read);
   return dotTransition;
@@ -25,22 +25,22 @@ DOTTransition *getSingleTransition(AFD *afd, Transition *transition)
 
 DOTTransition **getTransitionArray(AFD *afd)
 {
-  int size = *afd->number_transitions;
-  DOTTransition **transitions = malloc(sizeof(DOTTransition *) * size);
-  for (int i = 0; i < size; i++)
+  int tamanho = *afd->transicoes_numerica;
+  DOTTransition **transicoes = malloc(sizeof(DOTTransition *) * tamanho);
+  for (int i = 0; i < tamanho; i++)
   {
-    DOTTransition *transition = getSingleTransition(afd, afd->transitions[i]);
-    transitions[i] = transition;
+    DOTTransition *transicao = getSingleTransition(afd, afd->transicoes[i]);
+    transicoes[i] = transicao;
   }
-  return transitions;
+  return transicoes;
 }
 
 DOTFormat *visualizacao(AFD *afd)
 {
   char **double_circles = getDoubleCircles(afd);
-  DOTTransition **transitions = getTransitionArray(afd);
-  char *initial_state = copyString(afd->states[*afd->initial_state]);
-  DOTFormat *dotFormat = getDOTFormat(double_circles, *afd->number_final_states, transitions, *afd->number_transitions, initial_state);
+  DOTTransition **transicoes = getTransitionArray(afd);
+  char *estado_inicial = copyString(afd->estados[*afd->estado_inicial]);
+  DOTFormat *dotFormat = getDOTFormat(double_circles, *afd->numero_estado_final, transicoes, *afd->transicoes_numerica, estado_inicial);
   filterTransitions(dotFormat);
   return dotFormat;
 }

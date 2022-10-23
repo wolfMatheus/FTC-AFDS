@@ -1,53 +1,53 @@
 #include <stdlib.h>
 #include "../reconhecimento/reconhecimento.h"
 
-void executeOperation(ApplicationValidacao validacao)
+void executeOperation(ApplicationContext context)
 {
-  AFD *afd = readAFD(validacao.input1);
-  AFD *result = NULL;
-  if (validacao.dot)
+  AFD *afd = readAFD(context.input1);
+  AFD *resultado = NULL;
+  if (context.dot)
   {
     DOTFormat *dotFormat = visualizacao(afd);
-    writeDot(dotFormat, validacao.output);
+    writeDot(dotFormat, context.output);
     freeDot(dotFormat);
   }
-  if (validacao.complemento)
+  if (context.complemento)
   {
-    result = complemento(afd);
+    resultado = complemento(afd);
   }
-  if (validacao.intersecao)
+  if (context.intersecao)
   {
-    AFD *afd2 = readAFD(validacao.input2);
-    result = intersecao(afd, afd2);
+    AFD *afd2 = readAFD(context.input2);
+    resultado = intersecao(afd, afd2);
     freeAFD(afd2);
   }
-  if (validacao.uniao)
+  if (context.uniao)
   {
-    AFD *afd2 = readAFD(validacao.input2);
-    result = uniao(afd, afd2);
+    AFD *afd2 = readAFD(context.input2);
+    resultado = uniao(afd, afd2);
     freeAFD(afd2);
   }
-  if (validacao.minimizacao)
+  if (context.minimizacao)
   {
-    result = minimizacao(afd);
+    resultado = minimizacao(afd);
   }
-  if (validacao.reconhecer)
+  if (context.reconhecer)
   {
-    int size;
-    char **words = readWords(validacao.input2, &size);
+    int tamanho;
+    char **words = readWords(context.input2, &tamanho);
     if (!words)
     {
       return;
     }
-    int *results = reconhecer(afd, words, size);
-    writeReconhecerResult(results, validacao.output, size);
-    free(results);
-    freeWords(words, size);
+    int *resultados = reconhecer(afd, words, tamanho);
+    writeReconhecerResult(resultados, context.output, tamanho);
+    free(resultados);
+    freeWords(words, tamanho);
   }
-  if (result)
+  if (resultado)
   {
-    writeAFD(*result, validacao.output);
-    freeAFD(result);
+    writeAFD(*resultado, context.output);
+    freeAFD(resultado);
   }
   freeAFD(afd);
 }

@@ -3,7 +3,7 @@
 #include "./validacao.h"
 #include "../parametros/parametros.h"
 
-int updateForOneInput(CLI_Result result, char *name, char **receiver, ApplicationValidacao *appValidacao, int required)
+int updateForOneInput(CLI_Result result, char *name, char **receiver, ApplicationContext *appContext, int required)
 {
   CLI_Value *value = getCLIValue(result, name);
   if (value)
@@ -14,56 +14,56 @@ int updateForOneInput(CLI_Result result, char *name, char **receiver, Applicatio
   {
     if (required)
     {
-      appValidacao->err = 1;
-      sprintf(appValidacao->message, "Command %s: No input provided.", name);
+      appContext->err = 1;
+      sprintf(appContext->message, "Command %s: No input provided.", name);
     }
   }
   return !!value;
 }
 
-int updateForTwoInputs(CLI_Result result, char *name, ApplicationValidacao *appValidacao)
+int updateForTwoInputs(CLI_Result result, char *name, ApplicationContext *appContext)
 {
   CLI_Value *value = getCLIValue(result, name);
   if (value)
   {
-    appValidacao->input1 = value->value;
+    appContext->input1 = value->value;
     if (value->next)
     {
-      appValidacao->input2 = value->next->value;
+      appContext->input2 = value->next->value;
     }
     else
     {
-      appValidacao->err = 1;
-      sprintf(appValidacao->message, "Command %s: Two inputs are required.", name);
+      appContext->err = 1;
+      sprintf(appContext->message, "Command %s: Two inputs are required.", name);
     }
   }
   return !!value;
 }
 
-ApplicationValidacao *getAppValidacao(CLI_Result result)
+ApplicationContext *getAppContext(CLI_Result result)
 {
-  ApplicationValidacao *appValidacao = malloc(sizeof(ApplicationValidacao));
-  appValidacao->err = 0;
+  ApplicationContext *appContext = malloc(sizeof(ApplicationContext));
+  appContext->err = 0;
 
-  appValidacao->outputProvided = updateForOneInput(result, OUTPUT, &appValidacao->output, appValidacao, 1);
-  appValidacao->dot = updateForOneInput(result, DOT, &appValidacao->input1, appValidacao, 0);
-  appValidacao->complemento = updateForOneInput(result, COMPLEMENTO, &appValidacao->input1, appValidacao, 0);
-  appValidacao->minimizacao = updateForOneInput(result, MINIMIZACAO, &appValidacao->input1, appValidacao, 0);
-  appValidacao->intersecao = updateForTwoInputs(result, INTERSECAO, appValidacao);
-  appValidacao->uniao = updateForTwoInputs(result, UNIAO, appValidacao);
-  appValidacao->reconhecer = updateForTwoInputs(result, RECONHECER, appValidacao);
+  appContext->outputProvided = updateForOneInput(result, OUTPUT, &appContext->output, appContext, 1);
+  appContext->dot = updateForOneInput(result, DOT, &appContext->input1, appContext, 0);
+  appContext->complemento = updateForOneInput(result, COMPLEMENTO, &appContext->input1, appContext, 0);
+  appContext->minimizacao = updateForOneInput(result, MINIMIZACAO, &appContext->input1, appContext, 0);
+  appContext->intersecao = updateForTwoInputs(result, INTERSECAO, appContext);
+  appContext->uniao = updateForTwoInputs(result, UNIAO, appContext);
+  appContext->reconhecer = updateForTwoInputs(result, RECONHECER, appContext);
 
-  return appValidacao;
+  return appContext;
 }
 
-void validateAppValidacao(ApplicationValidacao *appValidacao)
+void validateAppContext(ApplicationContext *appContext)
 {
-  int operations[6] = {appValidacao->dot,
-                       appValidacao->complemento,
-                       appValidacao->minimizacao,
-                       appValidacao->intersecao,
-                       appValidacao->uniao,
-                       appValidacao->reconhecer};
+  int operations[6] = {appContext->dot,
+                       appContext->complemento,
+                       appContext->minimizacao,
+                       appContext->intersecao,
+                       appContext->uniao,
+                       appContext->reconhecer};
   int numberSelected = 0;
   for (int i = 0; i < 6; i++)
   {
@@ -72,17 +72,17 @@ void validateAppValidacao(ApplicationValidacao *appValidacao)
   }
   if (numberSelected > 1)
   {
-    appValidacao->err = 1;
-    sprintf(appValidacao->message, "You cannot choose more than one operation per execution.");
+    appContext->err = 1;
+    sprintf(appContext->message, "You cannot choose more than one operation per execution.");
   }
   if (!numberSelected)
   {
-    appValidacao->err = 1;
-    sprintf(appValidacao->message, "You must select one operation to do!");
+    appContext->err = 1;
+    sprintf(appContext->message, "You must select one operation to do!");
   }
 }
 
-void freeAppValidacao(ApplicationValidacao *validacao)
+void freeAppContext(ApplicationContext *context)
 {
-  free(validacao);
+  free(context);
 }
