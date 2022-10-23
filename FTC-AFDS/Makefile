@@ -1,3 +1,0 @@
-main:
-	gcc src/main.c src/strings/stringutil.c src/operacao/reconhecimento/reconhecimento.c src/operacao/complemento/complemento.c src/operacao/produto/produto.c src/operacao/uniao/uniao.c src/operacao/intersecao/intersecao.c src/operacao/reconhecimento/reconhecimentop.c src/operacao/visualizacao/filter/filter.c src/validacao/validacao.c src/operacao/executor/executor.c src/operacao/visualizacao/visualizacao.c src/operacao/minimizacao/minimizacao.c src/operacao/dot/dot.c src/afd/afd.c	src/cli/cli.c -o afdtool 
-	
