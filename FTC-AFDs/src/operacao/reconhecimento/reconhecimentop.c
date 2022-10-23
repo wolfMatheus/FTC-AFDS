@@ -1,4 +1,8 @@
 #include "../../strings/stringutil.h"
+      char *productState = concatWithComma(state1, state2);
+      produtoAfd->estados[currentStateIndex] = productState;
+      if (i == *afd1->estado_inicial && j == *afd2->estado_inicial)
+      {
 #include "./reconhecimento.h"
 #include <string.h>
 #include <stdlib.h>

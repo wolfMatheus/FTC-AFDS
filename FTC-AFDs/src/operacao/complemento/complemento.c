@@ -1,5 +1,4 @@
 
-
 #include "../operacoes.h"
 #include <stdlib.h>
 #include "../../strings/stringutil.h"

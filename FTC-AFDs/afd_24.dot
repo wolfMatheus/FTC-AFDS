@@ -1,0 +1,12 @@
+digraph finite_state_machine {
+rankdir=LR;
+size="8,5"
+node [shape = doublecircle]; "par_par" ;
+node [shape = circle];
+init [shape = point];
+init -> "par_par";
+"par_par" -> "impar_impar" [label = "0, 1"];
+"par_impar" -> "impar_par" [label = "0, 1"];
+"impar_par" -> "par_impar" [label = "0, 1"];
+"impar_impar" -> "par_par" [label = "0, 1"];
+}

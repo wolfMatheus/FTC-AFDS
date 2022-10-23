@@ -2,10 +2,7 @@
 
 /**
  * Estrutura responsavel por representar uma transicao. Utiliza os indices dos elementos em seus respectivos arrays no afd.
- * from: estado em que o afd se encontra no momento da transicao
- * read: simbolo que o afd faz a leitura para ativar a transicao
- * to: estado que o afd assume apos realizar a transicao 
- */
+*/
 typedef struct transition_est
 {
   int *from;
@@ -15,11 +12,6 @@ typedef struct transition_est
 
 /** 
  * Estrutura que representa um AFD.
- * estados: array de estados de tamanho estados_numericos.
- * alphabet: array de simbolos de tamanho numero_simbolos.
- * estado_inicial: estado inicial, indice sobre o array de estados.
- * estado_final: estados finais, array de indices sobre o array de estados, de tamanho numero_estado_final
- * transicoes: array de transicoes de tamanho transicoes_numerica. 
 */
 typedef struct afd_est
 {
